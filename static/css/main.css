@@ -1,0 +1,46 @@
+@font-face {
+    font-family: "NotoSans";
+    src: url("./fonts/NotoSans-Regular.ttf");
+}
+
+@font-face {
+    font-family: "NotoSans-Bold";
+    src: url("./fonts/NotoSans-Bold.ttf");
+}
+
+@font-face {
+    font-family: "NotoSans-Italic";
+    src: url("./fonts/NotoSans-Italic.ttf");
+}
+
+@font-face {
+    font-family: "Kaushan-Script";
+    src: url("./fonts/KaushanScript-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Roboto-Mono";
+    src: url("./fonts/RobotoMono-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Reem-Kufi";
+    src: url("./fonts/ReemKufi-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Prosto-One";
+    src: url("./fonts/ProstoOne-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Work-Sans";
+    src: url("./fonts/WorkSans-Regular.ttf");
+}
+
+body {
+    background: #fff8ee;
+    background-repeat: no-repeat;
+    font-family: "NotoSans";
+    font-size: 16px;
+}
