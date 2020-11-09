@@ -17,12 +17,7 @@ class ModalConnect extends Component {
     }
 
     handleConnectMetamask = () => {
-        // console.log('window', window);
-        // console.log('window.ethereum', window.ethereum);
-        // console.log('ethereum', ethereum);
         if (window.ethereum !== undefined) {
-            // console.log('ethereum', window.ethereum);
-
             window.ethereum.isConnected();
 
             window.ethereum.request({ method: 'eth_requestAccounts' })
@@ -30,7 +25,6 @@ class ModalConnect extends Component {
                     if (accounts.length === 0) {
                         console.log("Please connect to Binance Smart Chain!");
                     } else {
-                        // console.log('fffff', accounts);
                         const address = accounts[0];
                         this.props.updatedDataUser({
                             address
@@ -39,20 +33,14 @@ class ModalConnect extends Component {
                         window.ethereum
                             .request({ method: 'eth_chainId' })
                             .then(async (chainId) => {
-                                // console.log('ChainId', chainId);
-
                                 const chain_id = window.ethereum.isMetaMask === true ? chainId : chainId.substring(2, chainId.length);
                                 this.props.updateDataContract({
                                     chainId: chain_id,
                                     binanceChain: window.ethereum
                                 });
-
-                                // console.log('chain_id', chain_id);
-                                // console.log('chain_id', configs.chainId);
-                                // console.log('chain_id', configs.chainId.includes(chain_id));
-
                                 if (configs.chainId.includes(chain_id)) {
-                                    await this.getBalanceUSDT(window.ethereum);
+                                    await this.getTotalSupply(window.ethereum);
+                                    await this.getBalanceSuShi(window.ethereum);
                                     this.handleClose();
                                 }
                             })
@@ -80,21 +68,15 @@ class ModalConnect extends Component {
             window.ethereum
                 .request({ method: 'eth_chainId' })
                 .then(async (chainId) => {
-                    // console.log('ChainId', chainId);
-
                     if (this.props.userReducer.address) {
                         const chain_id = window.ethereum.isMetaMask === true ? chainId : chainId.substring(2, chainId.length);
                         this.props.updateDataContract({
                             chainId: chain_id,
                             binanceChain: window.ethereum
                         });
-
-                        // console.log('chain_id', chain_id);
-                        // console.log('chain_id', configs.chainId);
-                        // console.log('chain_id', configs.chainId.includes(chain_id));
-
                         if (configs.chainId.includes(chain_id)) {
-                            await this.getBalanceUSDT(window.ethereum);
+                            await this.getTotalSupply(window.ethereum);
+                            await this.getBalanceSuShi(window.ethereum);
                             this.handleClose();
                         }
                     }
@@ -117,18 +99,55 @@ class ModalConnect extends Component {
         }
     }
 
-    getBalanceUSDT = async (binanceChain) => {
+    getTotalSupply = async (binanceChain) => {
+        const data = abi.simpleEncode(
+            'totalSupply()',
+        );
+
+        const { sushiToken } = configs.contracts;
+
+        let params = [
+            {
+                from: this.props.userReducer.address,
+                to: sushiToken.address,
+                data: '0x' + Buffer.from(data).toString('hex')
+            },
+            "latest"
+        ];
+
+        try {
+            let totalSupply = await binanceChain
+                .request({
+                    method: 'eth_call',
+                    params,
+                });
+
+            // console.log('totalSupply', totalSupply);
+
+            totalSupply = convertWeiBigNumberToNumber(totalSupply);
+
+            // console.log('totalSupply', totalSupply);
+
+            this.props.updatedDataUser({
+                totalSupply
+            });
+        } catch (error) {
+            console.log('error balanceOf', error);
+        }
+    }
+
+    getBalanceSuShi = async (binanceChain) => {
         const data = abi.simpleEncode(
             'balanceOf(address)',
             this.props.userReducer.address
         );
 
-        const { mUsdt } = configs.contracts;
+        const { sushiToken } = configs.contracts;
 
         let params = [
             {
                 from: this.props.userReducer.address,
-                to: mUsdt.address,
+                to: sushiToken.address,
                 data: '0x' + Buffer.from(data).toString('hex')
             },
             "latest"
@@ -141,10 +160,14 @@ class ModalConnect extends Component {
                     params,
                 });
 
+            // console.log('balanceSuShi', balance);
+
             balance = convertWeiBigNumberToNumber(balance);
 
+            // console.log('balanceSuShi', balance);
+
             this.props.updatedDataUser({
-                balanceUSDT: balance
+                balanceSuShi: balance
             });
         } catch (error) {
             console.log('error balanceOf', error);

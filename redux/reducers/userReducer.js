@@ -7,7 +7,9 @@ const initialState = {
     isModal: false,
     isLoadingPage: false,
     isModalConnect: false,
-    isModalMyWallet: false
+    isModalMyWallet: false,
+    totalSupply: 0,
+    balanceSuShi: 0
 };
 
 export default function userReducer(state = initialState, action) {

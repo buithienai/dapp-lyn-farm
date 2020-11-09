@@ -2,9 +2,37 @@ import Link from 'next/link';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Layout from '../common/home/Layout';
+import { customNumber } from '../../utils/common';
+import configs from '../../configs';
 
 class Home extends Component {
+
+    renderText = (balance) => {
+        const { chainId } = this.props.contractReducer;
+        const { address } = this.props.userReducer;
+
+        if (chainId !== '') {
+            if (configs.chainId.includes(chainId)) {
+                if (address !== null) {
+                    return (
+                        <div className="balance">{customNumber(balance)}</div>
+                    );
+                }
+            } else {
+                return (
+                    <div className="balance">Locked</div>
+                );
+            }
+        }
+
+        return (
+            <div className="balance">Locked</div>
+        );
+    }
+
     render() {
+        const { totalSupply, balanceSuShi } = this.props.userReducer;
+
         return (
             <Layout activeMenu={1} classes="page-home">
                 <div className="container">
@@ -22,7 +50,7 @@ class Home extends Component {
                                             <span role="img">🍣</span>
                                             <div className="kIkmWh">
                                                 <div className="text">Your SUSHI Balance</div>
-                                                <div className="balance">Locked</div>
+                                                {this.renderText(balanceSuShi)}
                                             </div>
                                         </div>
                                     </div>
@@ -36,13 +64,13 @@ class Home extends Component {
                                         <div className="logiML">
                                             <div className="kIkmWh right">
                                                 <div className="text">Total SUSHI Supply</div>
-                                                <div className="balance">Locked</div>
+                                                {this.renderText(totalSupply)}
                                             </div>
                                         </div>
                                     </div>
                                     <div className="item-bottom">
                                         New rewards per block
-                                        <div className="number">0.000 SUSHI</div>
+                                        <div className="number">1.000 SUSHI</div>
                                     </div>
                                 </div>
                             </div>
@@ -61,7 +89,8 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => ({
-    userReducer: state.userReducer
+    userReducer: state.userReducer,
+    contractReducer: state.contractReducer
 });
 
 export default connect(mapStateToProps)(Home);

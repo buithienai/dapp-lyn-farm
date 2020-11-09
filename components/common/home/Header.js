@@ -84,7 +84,7 @@ class Header extends Component {
                                     Swap
                                 </a>
                                 <Link href="/faq">
-                                    <a className={"nav-link " + (activeMenu === 2 ? 'active' : '')}>
+                                    <a className={"nav-link " + (activeMenu === 4 ? 'active' : '')}>
                                         FAQ
                                     </a>
                                 </Link>
